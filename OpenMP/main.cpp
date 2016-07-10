@@ -2,12 +2,13 @@
 #include<time.h>
 #include<omp.h>
 
+const long STEP_NUM = 100000000;
+const double STEP_LENGTH = 1.0 / STEP_NUM;
+
 int main()
 {
     clock_t startTime = clock();
     double sum = 0.0;
-    const long STEP_NUM = 100000000;
-    const double STEP_LENGTH = 1.0 / STEP_NUM;
     double pi;
 
     printf("Start calculating...\n");
