@@ -7,11 +7,10 @@ const double STEP_LENGTH = 1.0 / STEP_NUM;
 
 int main (int argc, char* argv[])
 {
-    int rank, size;
     double pi, sum = 0.0;
-
     MPI_Init (&argc, &argv);
 
+    int rank, size;
     // get process ID
     MPI_Comm_rank (MPI_COMM_WORLD, &rank);
 
@@ -20,8 +19,8 @@ int main (int argc, char* argv[])
 
     // synchronize all processes and get the begin time
     MPI_Barrier(MPI_COMM_WORLD);
-
     double startTime = MPI_Wtime();
+
     double result = 0.0;
     double x;
     // each process will caculate a part of the sum

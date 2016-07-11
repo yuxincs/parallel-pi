@@ -3,7 +3,7 @@ OUTPUT = ./Output
 all: OpenMP PThread MPI
 
 OpenMP: openmp.c Output
-	${CC} -std=c99 -fopenmp -o ${OUTPUT}/OpenMP openmp.c
+	gcc-6 -std=c99 -fopenmp -o ${OUTPUT}/OpenMP openmp.c
 
 PThread: pthread.c Output
 	${CC} -std=c99 -lpthread -o ${OUTPUT}/PThread pthread.c
@@ -21,4 +21,4 @@ clean:
 test: OpenMP PThread MPI
 	${OUTPUT}/OpenMP
 	${OUTPUT}/PThread
-	mpirun -n 4 ${OUTPUT}/MPI
+	mpiexec -np 4 ${OUTPUT}/MPI
