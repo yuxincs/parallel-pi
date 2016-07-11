@@ -2,7 +2,6 @@
 #include "device_launch_parameters.h"
 
 #include <stdio.h>
-#include <omp.h>
 
 #define INTERVALS 1000000000
 
@@ -105,7 +104,7 @@ int main()
 	const float PI25DT = 3.141592653589793238462643;
 	int deviceCount = 0;
 
-	printf("Starting...");
+	printf("Starting calculating...");
     
     cudaError_t error = cudaGetDeviceCount(&deviceCount);
 
@@ -116,14 +115,6 @@ int main()
     }
 
 	deviceCount == 0 ? printf("There are no available CUDA device(s)\n") : printf("%d CUDA Capable device(s) detected\n", deviceCount);
-
-	float cpuStart = omp_get_wtime();
-	printf("\nCalculating Pi using CPU over %i intervals...\n", (int)INTERVALS);
-	double piCpu = calculatePiCPU();
-	printf("Pi is approximately %.16f, Error: %.16f\n", piCpu, fabs(piCpu - PI25DT));
-	
-	float cpuEnd = omp_get_wtime();
-	float cpuTime = (cpuEnd - cpuStart) * 1000;
 
 	/*--------- Simple Kernel ---------*/
 
@@ -217,7 +208,6 @@ int main()
 
 	// Print execution times
 	printf("\n======================================\n\n");
-	printf("CPU implementation time: %f ms\n", cpuTime);
 	printf("Simple GPU implementation time: %f ms\n", gpuTime);
 	printf("Optimised GPU implementation time: %f ms\n", optimizedGpuTime);
 
@@ -228,19 +218,4 @@ int main()
 	// Reset Device
 	cudaDeviceReset();
 	return 0;
-}
-
-double calculatePiCPU()
-{
-	double pi, sum = 0.0;
-	double step = 1.0 / INTERVALS;
-
-	for (int i = 0; i < INTERVALS; i++)
-	{
-		double x = (i - 0.5) * step;
-		sum += 4.0 / (1.0 + x*x);
-	}
-	
-	pi = step * sum;
-	return pi;
 }

@@ -3,7 +3,7 @@
 
 const double PI = 3.1415926535897932;
 const long STEP_NUM = 1000000000;
-const double STEP_LENGTH = 1.0 / STEP_NUM;
+const double STEP_LENGTH = 1.0 / 1000000000;
 
 int main (int argc, char* argv[])
 {
