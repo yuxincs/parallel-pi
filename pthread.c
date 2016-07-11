@@ -11,8 +11,8 @@ typedef struct _thread_param
 
 const double PI = 3.1415926535897932;
 const long STEP_NUM = 1000000000;
-const double STEP_LENGTH = 1.0 / STEP_NUM;
-const int THREAD_NUM = 10;
+const double STEP_LENGTH = 1.0 / 1000000000;
+const int THREAD_NUM = 4;
 
 void * calc(void * p)
 {
@@ -32,7 +32,7 @@ void * calc(void * p)
 
 int main()
 {
-    timeval startTime;
+    struct timeval startTime;
     gettimeofday(&startTime, NULL);
 
     double pi = 0;
@@ -63,10 +63,10 @@ int main()
 
     free(threadHandles);
 
-    timeval endTime;
+    struct timeval endTime;
     gettimeofday(&endTime, NULL);
 
-    printf("PI = %.16lf with error %.16lf\nTime elapsed : %lf seconds.\n", pi, PI - pi, (endTime.tv_sec - startTime.tv_sec) + (double(endTime.tv_usec - startTime.tv_usec) / 10E6 ));
+    printf("PI = %.16lf with error %.16lf\nTime elapsed : %lf seconds.\n", pi, PI - pi, (endTime.tv_sec - startTime.tv_sec) + ((double)(endTime.tv_usec - startTime.tv_usec) / 10E6 ));
 
     return 0;
 }

@@ -8,7 +8,7 @@ const double STEP_LENGTH = 1.0 / STEP_NUM;
 int main (int argc, char* argv[])
 {
     int rank, size;
-    double pi, sum = 0.0, result = 0.0;
+    double pi, sum = 0.0;
 
     MPI_Init (&argc, &argv);
 
@@ -22,10 +22,10 @@ int main (int argc, char* argv[])
     MPI_Barrier(MPI_COMM_WORLD);
 
     double startTime = MPI_Wtime();
-
-    // each process will caculate a part of the sum
+    double result = 0.0;
     double x;
-    for (int i = rank; i < STEP_NUM; i += size)
+    // each process will caculate a part of the sum
+    for (int i = rank * STEP_NUM / size; i < rank * STEP_NUM / size + STEP_NUM / size; i ++)
     {
         x = (i + 0.5) * STEP_LENGTH;
         result += 1.0 / (1.0 + x * x);
@@ -41,7 +41,7 @@ int main (int argc, char* argv[])
     // caculate and print PI
     if (rank == 0)
     {
-        pi = STEP_LENGTH * pi * 4;
+        pi = STEP_LENGTH * sum * 4;
         printf("PI = %.16lf with error %.16lf\nTime elapsed : %lf seconds.\n", pi, PI - pi, (endTime - startTime));
     }
 
