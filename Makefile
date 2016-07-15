@@ -1,6 +1,6 @@
 OUTPUT = ./Output
 
-all: OpenMP PThread MPI
+all: OpenMP PThread MPI CUDA
 
 OpenMP: openmp.c Output
 	${CC} -std=c99 -fopenmp -o ${OUTPUT}/OpenMP openmp.c
@@ -21,8 +21,15 @@ Output: ${OUTPUT}
 clean:
 	rm -rf ${OUTPUT}
 
-test: OpenMP PThread MPI
+	
+testOpenMP: OpenMP
 	${OUTPUT}/OpenMP
-	${OUTPUT}/PThread
-	mpiexec -np 20 ${OUTPUT}/MPI
+
+testCUDA: CUDA
 	${OUTPUT}/CUDA
+
+testMPI: MPI
+	mpiexec -np 20 ${OUTPUT}/MPI
+
+testPThread: PThread
+	${OUTPUT}/PThread
