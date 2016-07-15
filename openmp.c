@@ -15,7 +15,7 @@ int main()
     double sum = 0.0;
     double pi;
 
-    printf("Start calculating...\n");
+    printf("\nStart calculating...\n");
     // computational steps
     #pragma omp parallel for reduction(+:sum)
     for(int i = 0;i < STEP_NUM; i++)
@@ -27,7 +27,7 @@ int main()
 
     struct timeval endTime;
     gettimeofday(&endTime, NULL);
-    printf("PI = %.16lf with error %.16lf\nTime elapsed : %lf seconds.\n", pi, PI - pi, (endTime.tv_sec - startTime.tv_sec) + ((double)(endTime.tv_usec - startTime.tv_usec) / 10E6 ));
+    printf("PI = %.16lf with error %.16lf\nTime elapsed : %lf seconds.\n\n", pi, PI - pi, (endTime.tv_sec - startTime.tv_sec) + ((double)(endTime.tv_usec - startTime.tv_usec) / 10E6 ));
 
     return 0;
 }

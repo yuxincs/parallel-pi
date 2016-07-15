@@ -40,7 +40,7 @@ int main()
     pthread_t * threadHandles = (pthread_t *) malloc(sizeof(pthread_t) * THREAD_NUM);
     ThreadParameter * paramArray[THREAD_NUM];
 
-    printf("Start calculating...\n");
+    printf("\nStart calculating with %d threads...\n", THREAD_NUM);
     for (int i = 0; i < THREAD_NUM; i++)
     {
         ThreadParameter * param = (ThreadParameter *)malloc(sizeof(ThreadParameter));
@@ -66,7 +66,7 @@ int main()
     struct timeval endTime;
     gettimeofday(&endTime, NULL);
 
-    printf("PI = %.16lf with error %.16lf\nTime elapsed : %lf seconds.\n", pi, PI - pi, (endTime.tv_sec - startTime.tv_sec) + ((double)(endTime.tv_usec - startTime.tv_usec) / 10E6 ));
+    printf("PI = %.16lf with error %.16lf\nTime elapsed : %lf seconds.\n\n", pi, PI - pi, (endTime.tv_sec - startTime.tv_sec) + ((double)(endTime.tv_usec - startTime.tv_usec) / 10E6 ));
 
     return 0;
 }

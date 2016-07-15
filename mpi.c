@@ -7,18 +7,23 @@ const double STEP_LENGTH = 1.0 / 1000000000;
 
 int main (int argc, char* argv[])
 {
-    double pi, sum = 0.0;
+    double pi, sum = 0.0; 
+
     MPI_Init (&argc, &argv);
 
     int rank, size;
     // get process ID
     MPI_Comm_rank (MPI_COMM_WORLD, &rank);
 
-    // get processes Number
+    // get processes number
     MPI_Comm_size (MPI_COMM_WORLD, &size);
 
     // synchronize all processes and get the begin time
     MPI_Barrier(MPI_COMM_WORLD);
+
+    if(rank == 0)
+        printf("\n%d processes initialized.\nStart calculating...\n", size); 
+
     double startTime = MPI_Wtime();
 
     double result = 0.0;
@@ -41,7 +46,7 @@ int main (int argc, char* argv[])
     if (rank == 0)
     {
         pi = STEP_LENGTH * sum * 4;
-        printf("PI = %.16lf with error %.16lf\nTime elapsed : %lf seconds.\n", pi, PI - pi, (endTime - startTime));
+        printf("PI = %.16lf with error %.16lf\nTime elapsed : %lf seconds.\n\n", pi, PI - pi, (endTime - startTime));
     }
 
     MPI_Finalize();
