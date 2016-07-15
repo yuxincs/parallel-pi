@@ -3,108 +3,98 @@
 
 #include <stdio.h>
 
-#define INTERVALS 1000000000
+const float PI = 3.1415926535897932;
+const long STEP_NUM = 1000000000;
+const float STEP_LENGTH = 1.0 / 1000000000;
+const int THREAD_NUM = 500;
+const int BLOCK_NUM = 50;
 
-// Max number of threads per block
-#define THREADS 512
-#define BLOCKS 64
-
-double calculatePiCPU();
-
-// Synchronous error checking call. Enable with nvcc -DDEBUG
-inline void checkCUDAError(const char *fileName, const int line)
-{ 
-	#ifdef DEBUG 
-		cudaThreadSynchronize();
-		cudaError_t error = cudaGetLastError();
-		if(error != cudaSuccess) 
-		{
-			printf("Error at %s: line %i: %s\n", fileName, line, cudaGetErrorString(error));
-			exit(-1); 
-		}
-	#endif
-}
-
-
-__global__ void integrateSimple(float *sum, float step, int threads, int blocks)
+__global__ void integrateSimple(float *sum, int stepNum, float stepLength, int threadNum, int blockNum)
 {
-	int idx = threadIdx.x + blockIdx.x * blockDim.x;
-	
-	for (int i = idx; i < INTERVALS; i+=threads*blocks)
+	int globalThreadId = threadIdx.x + blockIdx.x *  blockDim.x;
+	int start = (stepNum / (blockNum * threadNum)) * globalThreadId;
+	int end = (stepNum / (blockNum * threadNum)) * (globalThreadId + 1);
+	float x;
+	for (int i = start; i < end; i ++)
 	{
-		float x = (i+0.5f) * step;
-		sum[idx] += 4.0f / (1.0f+ x*x);
+		x = (i + 0.5f) * stepLength;
+		sum[globalThreadId] += 1.0f / (1.0f + x * x);
 	}
 }
 
-__global__ void integrateOptimised(int *n, float *g_sum)
+__global__ void integrateOptimised(float *globalSum, int stepNum, float stepLength, int threadNum, int blockNum)
 {
-	int idx = threadIdx.x + blockIdx.x * blockDim.x;
-	int tx = threadIdx.x;
+	int globalThreadId = threadIdx.x + blockIdx.x * blockDim.x;
+	int start = (stepNum / (blockNum * threadNum)) * globalThreadId;
+	int end = (stepNum / (blockNum * threadNum)) * (globalThreadId + 1);
+	int localThreadId = threadIdx.x;
+	int blockId = blockIdx.x;
 
-	// Shared memory to hold the sum for each block
-	__shared__ float s_sum[THREADS];
+	// shared memory to hold the sum for each block
+	__shared__ float blockSum[THREAD_NUM];
 
-	float sum = 0.0f;
-	float step  = 1.0f / (float)*n;
+	memset(blockSum, 0, threadNum * sizeof(float));
 
-	for (int i = idx + 1; i <= *n; i += blockDim.x * BLOCKS) 
+	float x;
+	for (int i = start; i < end; i ++) 
 	{
-		float x = step * ((float)i - 0.5f);
-		sum += 4.0f / (1.0f+ x*x);
+		x = (i + 0.5f) * stepLength;
+		blockSum[localThreadId] += 1.0f / (1.0f+ x * x);
 	}
-	s_sum[tx] = sum * step;
+	blockSum[localThreadId] *= stepLength * 4;
 
-	// Wait for all threads to catch up
+	// wait for all threads to catch up
 	__syncthreads();
 
-	// For each block, do sum using shared memory
-	for (int i = blockDim.x / 2; i > 0; i >>= 1)
+	// for each block, do sum using shared memory
+	/*for (int i = blockDim.x / 2; i > 0; i >>= 1)
 	{ 
 		if (tx < i)
-		{
 			s_sum[tx] += s_sum[tx + i];
-		}
 
 		__syncthreads();
-	}
+	}*/
 
-	// Write results to global memory
-	g_sum[idx] = s_sum[tx];
+	// sum up the summation of the block
+	if(localThreadId == 0)
+	{
+		float sum = 0.0;
+		for(int i = 0;i < threadNum; i++)
+			sum += blockSum[i];
+
+		// write results to global memory
+		globalSum[blockId] = sum;
+	}
 }
 
-// Parallel reduction to speedup summation
-__global__ static void sumReduce(int *n, float *g_sum)
+// TODO: Check with this function to provide parallel reduction
+// parallel reduction to speedup summation
+__global__ static void sumReduce(long *n, float *globalSum)
 {
 	int tx = threadIdx.x;
-    __shared__ float s_sum[THREADS];
+    __shared__ float s_sum[THREAD_NUM];
     
-    if (tx < BLOCKS)
-      s_sum[tx] = g_sum[tx * THREADS];
+    if (tx < BLOCK_NUM)
+      s_sum[tx] = globalSum[tx * THREAD_NUM];
     else
-	{
       s_sum[tx] = 0.0f;
-	}
 
-	// For each block
+	// for each block
     for (int i = blockDim.x / 2; i > 0; i >>= 1) 
 	{ 
         if (tx < i)
-		{
            s_sum[tx] += s_sum[tx + i];
-		}
         __syncthreads();
     }
 
-    g_sum[tx] = s_sum[tx];
+    globalSum[tx] = s_sum[tx];
 }
 
 int main()
 {
-	const float PI25DT = 3.141592653589793238462643;
 	int deviceCount = 0;
 
-	printf("Starting calculating...");
+	printf("\nConfiguring device...\n");
     
     cudaError_t error = cudaGetDeviceCount(&deviceCount);
 
@@ -114,108 +104,92 @@ int main()
         return 1;
     }
 
-	deviceCount == 0 ? printf("There are no available CUDA device(s)\n") : printf("%d CUDA Capable device(s) detected\n", deviceCount);
+	if(deviceCount == 0)
+	{
+		printf("There are no available CUDA device(s)\n");
+		return 1;
+	}
+	else
+		printf("%d CUDA Capable device(s) detected\n", deviceCount);
 
-	/*--------- Simple Kernel ---------*/
-
-	int threads = 8, blocks = 30;
-	dim3 block(threads);
-	dim3 grid(blocks);
-	float *sum_h, *sum_d;
-	float step = 1.0f / INTERVALS;
+	/* Simple Calculation (without optimization) */
+	dim3 block(THREAD_NUM);
+	dim3 grid(BLOCK_NUM);
+	float *hostSum = NULL, *deviceSum = NULL;
 	float piSimple = 0;
 	
-	// Allocate host memory
-	sum_h = (float *)malloc(blocks*threads*sizeof(float));	
+	// allocate host memory
+	hostSum = (float *)malloc(BLOCK_NUM * THREAD_NUM * sizeof(float));	
 
-	// Allocate device memory
-	cudaMalloc((void **) &sum_d, blocks*threads*sizeof(float));
+	// allocate device memory
+	cudaMalloc((void **) &deviceSum, BLOCK_NUM * THREAD_NUM * sizeof(float));
+
+	// clear device memory
+	cudaMemset(deviceSum, 0, BLOCK_NUM * THREAD_NUM * sizeof(float));
 
 	// CUDA events needed to measure execution time
-	cudaEvent_t start, stop;
-	float gpuTime, optimizedGpuTime;
+	cudaEvent_t startTime, stopTime;
+	float simpleGpuTime, optimizedGpuTime;
 
-	// Start timer
-	cudaEventCreate(&start);
-	cudaEventCreate(&stop);
-	cudaEventRecord(start, 0);
+	// start timer
+	cudaEventCreate(&startTime);
+	cudaEventCreate(&stopTime);
+	cudaEventRecord(startTime, 0);
 
-	printf("\nCalculating Pi using simple GPU kernel over %i intervals...\n", (int)INTERVALS);
-	integrateSimple<<<grid, block>>>(sum_d, step, threads, blocks);	
-	checkCUDAError(__FILE__, __LINE__);
+	printf("Start calculating in simple kernel function...\n");
+	integrateSimple<<<grid, block>>>(deviceSum, STEP_NUM, STEP_LENGTH, THREAD_NUM, BLOCK_NUM);	
 
-	// Stop timer
-	cudaEventRecord(stop, 0);
-	cudaEventSynchronize(stop);
-	cudaEventElapsedTime(&gpuTime, start, stop);
+	// stop timer
+	cudaEventRecord(stopTime, 0);
+	cudaEventSynchronize(stopTime);
+	cudaEventElapsedTime(&simpleGpuTime, startTime, stopTime);
 
-	// Retrieve result from device
-	cudaMemcpy(sum_h, sum_d, blocks*threads*sizeof(float), cudaMemcpyDeviceToHost);
+	// retrieve result from device
+	cudaMemcpy(hostSum, deviceSum, BLOCK_NUM * THREAD_NUM * sizeof(float), cudaMemcpyDeviceToHost);
 	
-	// Sum result on host
-	for (int i=0;i < threads*blocks; i++)
-	{
-		piSimple += sum_h[i];	
-	}
+	// sum result on host
+	for (int i = 0;i < BLOCK_NUM * THREAD_NUM; i++)
+		piSimple += hostSum[i];	
 	
-	piSimple *= step;
-	printf("Pi is approximately %.16f, Error: %.16f\n", piSimple, fabs(piSimple - PI25DT));
+	piSimple *= STEP_LENGTH * 4;
+	printf("PI = %.16lf with error %.16lf\nTime elapsed : %f seconds.\n\n", piSimple, fabs(piSimple - PI), simpleGpuTime / 1000);
 
-	free(sum_h);
-	cudaFree(sum_d);
+	free(hostSum);
+	cudaFree(deviceSum);
 
-	/*--------- Optimized Kernel ---------*/
-
-    int N = 0; 
-    int *n_d; 
-    float pi;
-    float *pi_d;
+	/* Optimized Calculation */
+    float pi = 0.0;
+    float *deviceBlockSum;
+	float *hostBlockSum;
  
-    // Allocate memory on GPU
-    cudaMalloc( (void **) &n_d, sizeof(int) * 1 );
-    cudaMalloc( (void **) &pi_d, sizeof(float) * BLOCKS * THREADS );
+	// allocate memory on host
+	hostBlockSum = (float *)malloc(BLOCK_NUM * sizeof(float));
 
-	while (1)
-	{
-		printf("\nEnter no. of intervals for optimised kernel (Recommended 1000000): ");
-		fflush(stdout);
-		scanf("%d",&N);
-
-		if (N > 0) break;
-		else {
-			printf("Please enter a valid number");
-		}
-	}
-	// Copy N to GPU
-	cudaMemcpy( n_d, &N, sizeof(int) * 1, cudaMemcpyHostToDevice );	
+    // allocate memory on GPU
+    cudaMalloc( (void **) &deviceBlockSum, sizeof(float) * BLOCK_NUM);
 
 	// Start timer
-	cudaEventRecord(start, 0);
-	printf("Launching optimised kernel...\n");
-	integrateOptimised<<<BLOCKS,THREADS>>>(n_d, pi_d);
-	checkCUDAError(__FILE__, __LINE__);
-	sumReduce<<< 1, THREADS >>>(n_d, pi_d);
-	checkCUDAError(__FILE__, __LINE__);
+	cudaEventRecord(startTime, 0);
+	printf("Start calculating in optimized kernel function...\n");
+	integrateOptimised<<<BLOCK_NUM, THREAD_NUM>>>(deviceBlockSum, STEP_NUM, STEP_LENGTH, THREAD_NUM, BLOCK_NUM);
 
-	cudaEventRecord(stop, 0);
-	cudaEventSynchronize(stop);
-	cudaEventElapsedTime(&optimizedGpuTime, start, stop);
+	// retrieve result from device
+	cudaMemcpy(hostBlockSum, deviceBlockSum, BLOCK_NUM * sizeof(float), cudaMemcpyDeviceToHost);
 	
-	// copy back from GPU to CPU
-	cudaMemcpy(&pi, pi_d, sizeof(float) * 1, cudaMemcpyDeviceToHost);
+	// sum result on host
+	for (int i = 0;i < BLOCK_NUM; i++)
+		pi += hostBlockSum[i];	
 
-	printf("Pi is approximately %.16f, Error: %.16f\n", pi, fabs(pi - PI25DT));
+	cudaEventRecord(stopTime, 0);
+	cudaEventSynchronize(stopTime);
+	cudaEventElapsedTime(&optimizedGpuTime, startTime, stopTime);
 
-	// Print execution times
-	printf("\n======================================\n\n");
-	printf("Simple GPU implementation time: %f ms\n", gpuTime);
-	printf("Optimised GPU implementation time: %f ms\n", optimizedGpuTime);
+	printf("PI = %.16lf with error %.16lf\nTime elapsed : %f seconds.\n\n", pi, fabs(pi - PI), optimizedGpuTime / 1000);
 
-	// Free memory
-	cudaFree(n_d);
-	cudaFree(pi_d);
+	// free memory
+	cudaFree(deviceBlockSum);
 
-	// Reset Device
+	// reset Device
 	cudaDeviceReset();
 	return 0;
 }
