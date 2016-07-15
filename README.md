@@ -45,5 +45,15 @@ at least a nVidia card and `nvcc` installed to compile and run the code.
 ## Experiment
 All experiments are carried out under `Linux` with `nvcc` and nVidia cards installed.
 
+And I chose 2^30 as the STEP_NUM for all framework except `OpenMP` which does not provide manual settings.
+
+Parallel parameters are listed below:
+|               |                        |
+|:-------------:|:----------------------:|
+| MPI           | 64 Processes           |
+| PThread       | 64 Threads             |
+| CUDA          | 512 Threads/64 Blocks  |
+
+
 ## License
 [MIT](https://github.com/RyanWangGit/PI-Calculation/blob/master/LICENSE.md).
