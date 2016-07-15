@@ -21,6 +21,7 @@ Output: ${OUTPUT}
 clean:
 	rm -rf ${OUTPUT}
 
+test: testOpenMP testPThread testMPI testCUDA
 	
 testOpenMP: OpenMP
 	${OUTPUT}/OpenMP
