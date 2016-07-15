@@ -22,11 +22,28 @@ And we use mid-rectangle method to calculate the integration, which includes loo
 Use `pthread` as the parallel framework.
 
 #### OpenMP
-Use `OpenMP` as the parallel framework to calculate, note that in macOS it needs to be built with `gcc` available,
-`gcc-6` is recommended, which could be installed by 
+Use `OpenMP` as the parallel framework to calculate, note that in macOS the default `clang` does not support `OpenMP`
+, thus it needs to be built with `gcc` or `clang-omp`.
+
+`gcc-6` could be directly installed by 
 ```
 brew install gcc --without-multilib
 ```
-Otherwise `clang-omp` is needed to support `OpenMP`. 
+
+and `clang-omp`  could be installed via
+```
+brew install clang-omp
+```
+
+#### MPI
+Use `MPI` as the parallel framework.
+
+#### CUDA
+Use `CUDA` to optimize the parallel computing process, which must be running under CUDA environment i.e. you must have 
+at least a nVidia card and `nvcc` installed to compile and run the code.
+
+## Experiment
+All experiments are carried out under `Linux` with `nvcc` and nVidia cards installed.
+
 ## License
 [MIT](https://github.com/RyanWangGit/PI-Calculation/blob/master/LICENSE.md).
