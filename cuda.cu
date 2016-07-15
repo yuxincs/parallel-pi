@@ -4,10 +4,10 @@
 #include <stdio.h>
 
 const float PI = 3.1415926535897932;
-const long STEP_NUM = 1000000000;
-const float STEP_LENGTH = 1.0 / 1000000000;
-const int THREAD_NUM = 500;
-const int BLOCK_NUM = 50;
+const long STEP_NUM = 1070596096;
+const float STEP_LENGTH = 1.0 / 1070596096;
+const int THREAD_NUM = 512;
+const int BLOCK_NUM = 64;
 
 __global__ void integrateSimple(float *sum, int stepNum, float stepLength, int threadNum, int blockNum)
 {
@@ -47,47 +47,33 @@ __global__ void integrateOptimised(float *globalSum, int stepNum, float stepLeng
 	__syncthreads();
 
 	// for each block, do sum using shared memory
-	/*for (int i = blockDim.x / 2; i > 0; i >>= 1)
+	for (int i = blockDim.x / 2; i > 0; i >>= 1)
 	{ 
-		if (tx < i)
-			s_sum[tx] += s_sum[tx + i];
+		if (localThreadId < i)
+			blockSum[localThreadId] += blockSum[localThreadId + i];
 
 		__syncthreads();
-	}*/
-
-	// sum up the summation of the block
-	if(localThreadId == 0)
-	{
-		float sum = 0.0;
-		for(int i = 0;i < threadNum; i++)
-			sum += blockSum[i];
-
-		// write results to global memory
-		globalSum[blockId] = sum;
 	}
+
+	// sum up the summation of the block and write to the global sum
+	if(localThreadId == 0)
+		globalSum[blockId] = blockSum[0];
 }
 
-// TODO: Check with this function to provide parallel reduction
-// parallel reduction to speedup summation
-__global__ static void sumReduce(long *n, float *globalSum)
+// parallel reduction to speedup summation which can only be performed inside a block
+__global__ void sumReduce(float *sum, float *sumArray, int arraySize)
 {
-	int tx = threadIdx.x;
-    __shared__ float s_sum[THREAD_NUM];
-    
-    if (tx < BLOCK_NUM)
-      s_sum[tx] = globalSum[tx * THREAD_NUM];
-    else
-      s_sum[tx] = 0.0f;
-
-	// for each block
-    for (int i = blockDim.x / 2; i > 0; i >>= 1) 
+	int localThreadId = threadIdx.x;
+	for (int i = blockDim.x / 2; i > 0; i >>= 1)
 	{ 
-        if (tx < i)
-           s_sum[tx] += s_sum[tx + i];
-        __syncthreads();
-    }
+		if (localThreadId < i)
+			sumArray[localThreadId] += sumArray[localThreadId + i];
 
-    globalSum[tx] = s_sum[tx];
+		__syncthreads();
+	}
+
+	if(localThreadId == 0)
+		*sum = sumArray[0];
 }
 
 int main()
@@ -160,25 +146,29 @@ int main()
 	/* Optimized Calculation */
     float pi = 0.0;
     float *deviceBlockSum;
-	float *hostBlockSum;
+	float *devicePi;
+	//float *hostBlockSum;
  
 	// allocate memory on host
-	hostBlockSum = (float *)malloc(BLOCK_NUM * sizeof(float));
+	//hostBlockSum = (float *)malloc(BLOCK_NUM * sizeof(float));
 
     // allocate memory on GPU
+	cudaMalloc((void **) &devicePi, sizeof(float));
     cudaMalloc( (void **) &deviceBlockSum, sizeof(float) * BLOCK_NUM);
 
 	// Start timer
 	cudaEventRecord(startTime, 0);
 	printf("Start calculating in optimized kernel function...\n");
 	integrateOptimised<<<BLOCK_NUM, THREAD_NUM>>>(deviceBlockSum, STEP_NUM, STEP_LENGTH, THREAD_NUM, BLOCK_NUM);
+	sumReduce<<<1, BLOCK_NUM>>>(devicePi, deviceBlockSum, BLOCK_NUM);
 
 	// retrieve result from device
-	cudaMemcpy(hostBlockSum, deviceBlockSum, BLOCK_NUM * sizeof(float), cudaMemcpyDeviceToHost);
+	cudaMemcpy(&pi, devicePi, sizeof(float), cudaMemcpyDeviceToHost);
+	//cudaMemcpy(hostBlockSum, deviceBlockSum, BLOCK_NUM * sizeof(float), cudaMemcpyDeviceToHost);
 	
 	// sum result on host
-	for (int i = 0;i < BLOCK_NUM; i++)
-		pi += hostBlockSum[i];	
+	//for (int i = 0;i < BLOCK_NUM; i++)
+		//pi += hostBlockSum[i];	
 
 	cudaEventRecord(stopTime, 0);
 	cudaEventSynchronize(stopTime);
