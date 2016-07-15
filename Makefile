@@ -30,7 +30,7 @@ testCUDA: CUDA
 	${OUTPUT}/CUDA
 
 testMPI: MPI
-	mpiexec -np 20 ${OUTPUT}/MPI
+	mpiexec -np 64 ${OUTPUT}/MPI
 
 testPThread: PThread
 	${OUTPUT}/PThread

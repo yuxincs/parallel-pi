@@ -4,8 +4,8 @@
 #include <sys/time.h>
 
 const double PI = 3.1415926535897932;
-const long STEP_NUM = 1000000000;
-const double STEP_LENGTH = 1.0 / 1000000000;
+const long STEP_NUM = 1070596096;
+const double STEP_LENGTH = 1.0 / 1070596096;
 
 int main()
 {
