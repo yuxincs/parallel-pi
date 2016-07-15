@@ -49,9 +49,12 @@ All experiments are carried out under `Linux` with `nvcc` and nVidia cards insta
 And I chose 2^30 as the STEP_NUM for all framework except `OpenMP` which does not provide manual settings.
 
 Parallel parameters are listed below:
-|| MPI           || 64 Processes           ||
-|| PThread       || 64 Threads             ||
-|| CUDA          || 512 Threads/64 Blocks  ||
+
+|               |                        |
+|:-------------:|:----------------------:|
+| MPI           | 64 Processes           |
+| PThread       | 64 Threads             |
+| CUDA          | 512 Threads/64 Blocks  |
 
 
 ## License
