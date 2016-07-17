@@ -13,14 +13,14 @@ int main()
     gettimeofday(&startTime, NULL);
 
     double sum = 0.0;
-    double pi;
+    double pi, x;
 
     printf("\nStart calculating...\n");
     // computational steps
-    #pragma omp parallel for reduction(+:sum)
+    #pragma omp parallel for reduction(+:sum) private(x) num_threads(16)
     for(int i = 0;i < STEP_NUM; i++)
     {
-        double x = (i + 0.5) * STEP_LENGTH;
+        x = (i + 0.5) * STEP_LENGTH;
         sum += 1.0 / (1.0 + x * x);
     }
     pi = STEP_LENGTH * sum * 4;

@@ -12,7 +12,7 @@ typedef struct _thread_param
 const double PI = 3.1415926535897932;
 const long STEP_NUM = 1070596096;
 const double STEP_LENGTH = 1.0 / 1070596096;
-const int THREAD_NUM = 64;
+const int THREAD_NUM = 16;
 
 void * calc(void * p)
 {
