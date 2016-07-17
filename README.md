@@ -43,18 +43,23 @@ Use `MPI` as the parallel framework.
 Use `CUDA` to optimize the parallel computing process, which must be running under CUDA environment i.e. you must have 
 at least a nVidia card and `nvcc` installed to compile and run the code.
 
+#### MPIOMP
+
+
 ## Experiment
 All experiments are carried out under `Linux` with `nvcc` and nVidia cards installed.
 
-And I chose 2^30 as the STEP_NUM for all framework except `OpenMP` which does not provide manual settings.
+And I chose 2^30 as the STEP_NUM for all framework.
 
 Parallel parameters are listed below:
 
-|               |                        |
-|:-------------:|:----------------------:|
-| MPI           | 64 Processes           |
-| PThread       | 64 Threads             |
-| CUDA          | 512 Threads/64 Blocks  |
+|               |                         |
+|:-------------:|:-----------------------:|
+| OpenMP        | 16 Threads
+| MPI           | 16 Processes            |
+| PThread       | 16 Threads              |
+| CUDA          | 512 Threads / 64 Blocks |
+| MPIOMP        | 4 Processes / 4 Threads |
 
 
 ## License
