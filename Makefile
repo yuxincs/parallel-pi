@@ -14,6 +14,9 @@ MPI: mpi.c
 CUDA: cuda.cu
 	nvcc -o ${OUTPUT}/CUDA cuda.cu
 
+MPIOMP: mpiomp.c
+	mpicc -fopenmp -std=c99 -o ${OUTPUT}/MPIOMP mpiomp.c
+
 Output: ${OUTPUT}
 	mkdir ${OUTPUT}
 
@@ -30,7 +33,10 @@ testCUDA: CUDA
 	${OUTPUT}/CUDA
 
 testMPI: MPI
-	mpiexec -np 64 ${OUTPUT}/MPI
+	mpiexec -np 16 ${OUTPUT}/MPI
 
 testPThread: PThread
 	${OUTPUT}/PThread
+
+testMPIOMP: MPIOMP
+	mpiexec -np 4 ${OUTPUT}/MPIOMP
