@@ -49,13 +49,9 @@ at least a nVidia card and `nvcc` installed to compile and run the code.
 ## Experiment
 All experiments are carried out under `Linux` with `nvcc` and nVidia cards installed.
 
-<<<<<<< HEAD
 And I chose 2^30 as the STEP_NUM for all framework.
 
 Parallel parameters are listed below:
-=======
-And I chose 2^30 as the STEP_NUM for all framework and set the parallel parameters below except `OpenMP` which does not provide manual settings.
->>>>>>> origin/master
 
 |               |                         |
 |:-------------:|:-----------------------:|
