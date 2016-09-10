@@ -44,7 +44,7 @@ Use `CUDA` to optimize the parallel computing process, which must be running und
 at least a nVidia card and `nvcc` installed to compile and run the code.
 
 #### MPIOMP
-
+Use mixed method of `MPI` and `OpenMP` to gain scalability and high parallel performance at the same time.
 
 ## Experiment
 All experiments are carried out under `Linux` with `nvcc` and nVidia cards installed.
