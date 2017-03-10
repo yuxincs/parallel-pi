@@ -1,6 +1,4 @@
 # PI-Calculation
-###### By : Ryan Wang @ HUST
-###### Email : wangyuxin@hust.edu.cn
 
 Calculating PI Value In Different Parallel Framework.
 
