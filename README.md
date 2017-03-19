@@ -61,4 +61,4 @@ Parallel parameters are listed below:
 
 
 ## License
-[MIT](https://github.com/RyanWangGit/PI-Calculation/blob/master/LICENSE.md).
+[MIT](https://github.com/RyanWangGit/PI-Calculation/blob/master/LICENSE).
