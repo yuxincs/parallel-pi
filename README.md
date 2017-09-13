@@ -51,9 +51,9 @@ And I chose 2^30 as the STEP_NUM for all framework.
 
 Parallel parameters are listed below:
 
-|               |                         |
+| Framework     | Parameters              |
 |:-------------:|:-----------------------:|
-| OpenMP        | 16 Threads
+| OpenMP        | 16 Threads              |
 | MPI           | 16 Processes            |
 | PThread       | 16 Threads              |
 | CUDA          | 512 Threads / 64 Blocks |
