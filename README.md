@@ -3,12 +3,11 @@
 Calculating PI Value In Different Parallel Framework.
 
 ## Basic Theory
-Since<!-- $$ \int_0^1 \frac{1}{1+x^2}dx = arctanx\big|_0^1$$ -->
-<img src='http://latex.codecogs.com/svg.latex?%5Cdpi%7B120%7D%20%5Clarge%20%5Cint_0%5E1%20%5Cfrac%7B1%7D%7B1&plus;x%5E2%7Ddx%20%3D%20arctanx%5Cbig%7C_0%5E1'></img>Thus we have<!-- $$\Pi = 4 \times \int_0^1\frac{1}{1+x^2}dx$$ -->
-<img src='http://latex.codecogs.com/svg.latex?%5Cdpi%7B120%7D%20%5Clarge%20%5CPi%20%3D%204%20%5Ctimes%20%5Cint_0%5E1%5Cfrac%7B1%7D%7B1&plus;x%5E2%7Ddx'></img>
+<!-- $$\int_0^1 \frac{1}{1+x^2}dx = arctanx\big|_0^1=\frac{\Pi}{4}\quad\Rightarrow\quad\Pi = 4 \times \int_0^1\frac{1}{1+x^2}dx$$ -->
+<img src='https://latex.codecogs.com/svg.latex?\int_0^1%20\frac{1}{1+x^2}dx%20=%20arctanx\big|_0^1=\frac{\Pi}{4}\quad\Rightarrow\quad\Pi%20=%204%20\times%20\int_0^1\frac{1}{1+x^2}dx'></img>
 
 
-And we use mid-rectangle method to calculate the integration, which includes loops that may be optimized using parallel computing methods.
+We use mid-rectangle method to calculate the integration, which includes loops that may be optimized using parallel computing methods.
 
 ## Directories
 #### PThread
