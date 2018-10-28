@@ -31,7 +31,7 @@ brew install clang-omp
 Use `MPI` as the parallel framework.
 
 #### CUDA
-Use `CUDA` to optimize the parallel computing process, which must be running under CUDA environment i.e. you must have 
+Use `CUDA` to optimize the parallel computing process, which must be run under CUDA environment. i.e., you must have 
 at least a nVidia card and `nvcc` installed to compile and run the code.
 
 #### MPIOMP
