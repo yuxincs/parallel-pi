@@ -4,7 +4,7 @@ Calculating PI Value In Different Parallel Framework.
 
 ## Basic Theory
 <!-- $$\int_0^1 \frac{1}{1+x^2}dx = arctanx\big|_0^1=\frac{\Pi}{4}\quad\Rightarrow\quad\Pi = 4 \times \int_0^1\frac{1}{1+x^2}dx$$ -->
-<img src='https://latex.codecogs.com/svg.latex?\int_0^1%20\frac{1}{1+x^2}dx%20=%20arctanx\big|_0^1=\frac{\Pi}{4}\quad\Rightarrow\quad\Pi%20=%204%20\times%20\int_0^1\frac{1}{1+x^2}dx'></img>
+<img src='https://latex.codecogs.com/svg.latex?\int_0^1%20\frac{1}{1+x^2}dx%20=%20arctanx\big|_0^1=\frac{\pi}{4}\quad\Rightarrow\quad\pi%20=%204%20\times%20\int_0^1\frac{1}{1+x^2}dx'></img>
 
 
 We use mid-rectangle method to calculate the integration, which includes loops that may be optimized using parallel computing methods.
