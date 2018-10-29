@@ -1,42 +1,42 @@
-OUTPUT = ./Output
+OUTPUT = ./output
 
-all: OpenMP PThread MPI CUDA
+all: openmp pthread mpi cuda
 
-OpenMP: openmp.c Output
-	${CC} -std=c99 -fopenmp -o ${OUTPUT}/OpenMP openmp.c
+openmp: openmp.c output
+	${CC} -std=c99 -fopenmp -o ${OUTPUT}/openmp openmp.c
 
-PThread: pthread.c Output
-	${CC} -std=c99 -lpthread -o ${OUTPUT}/PThread pthread.c
+pthread: pthread.c output
+	${CC} -std=c99 -lpthread -o ${OUTPUT}/pthread pthread.c
 
-MPI: mpi.c
-	mpicc -std=c99 -o ${OUTPUT}/MPI mpi.c
+mpi: mpi.c output
+	mpicc -std=c99 -o ${OUTPUT}/mpi mpi.c
 
-CUDA: cuda.cu
-	nvcc -o ${OUTPUT}/CUDA cuda.cu
+cuda: cuda.cu output
+	nvcc -o ${OUTPUT}/cuda cuda.cu
 
-MPIOMP: mpiomp.c
+mpiomp: mpiomp.c output
 	mpicc -fopenmp -std=c99 -o ${OUTPUT}/MPIOMP mpiomp.c
 
-Output: ${OUTPUT}
+output: ${OUTPUT}
 	mkdir ${OUTPUT}
 
 .PHONY: clean test
 clean:
 	rm -rf ${OUTPUT}
 
-test: testOpenMP testPThread testMPI testCUDA
-	
-testOpenMP: OpenMP
-	${OUTPUT}/OpenMP
+test: testopenmp testpthread testmpi testcuda
 
-testCUDA: CUDA
-	${OUTPUT}/CUDA
+testopenmp: openmp
+	${OUTPUT}/openmp
 
-testMPI: MPI
-	mpiexec -np 16 ${OUTPUT}/MPI
+testcuda: cuda
+	${OUTPUT}/cuda
 
-testPThread: PThread
-	${OUTPUT}/PThread
+testmpi: mpi
+	mpiexec -np 16 ${OUTPUT}/mpi
 
-testMPIOMP: MPIOMP
-	mpiexec -np 4 ${OUTPUT}/MPIOMP
+testpthread: pthread
+	${OUTPUT}/pthread
+
+testmpiomp: mpiomp
+	mpiexec -np 4 ${OUTPUT}/mpiomp
