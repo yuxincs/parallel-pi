@@ -1,6 +1,6 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-
+#include <assert.h>
 #include <stdio.h>
 
 const float PI = 3.1415926535897932;
@@ -175,7 +175,8 @@ int main()
     cudaEventElapsedTime(&optimizedGpuTime, startTime, stopTime);
 
     printf("PI = %.16lf with error %.16lf\nTime elapsed : %f seconds.\n\n", pi, fabs(pi - PI), optimizedGpuTime / 1000);
-
+    assert(fabs(pi - PI) <= 0.001);
+    
     // free memory
     cudaFree(deviceBlockSum);
 

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <assert.h>
 #include <mpi.h>
 
 const double PI = 3.1415926535897932;
@@ -7,7 +8,7 @@ const double STEP_LENGTH = 1.0 / 1070596096;
 
 int main (int argc, char* argv[])
 {
-    double pi, sum = 0.0; 
+    double pi, sum = 0.0;
 
     MPI_Init (&argc, &argv);
 
@@ -22,7 +23,7 @@ int main (int argc, char* argv[])
     MPI_Barrier(MPI_COMM_WORLD);
 
     if(rank == 0)
-        printf("\n%d processes initialized.\nStart calculating...\n", size); 
+        printf("\n%d processes initialized.\nStart calculating...\n", size);
 
     double startTime = MPI_Wtime();
 
@@ -46,7 +47,8 @@ int main (int argc, char* argv[])
     if (rank == 0)
     {
         pi = STEP_LENGTH * sum * 4;
-        printf("PI = %.16lf with error %.16lf\nTime elapsed : %lf seconds.\n\n", pi, PI - pi, (endTime - startTime));
+        printf("PI = %.16lf with error %.16lf\nTime elapsed : %lf seconds.\n\n", pi, fabs(pi - PI), (endTime - startTime));
+        assert(fabs(pi - PI) <= 0.001);
     }
 
     MPI_Finalize();

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <assert.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include <sys/time.h>
@@ -66,7 +67,7 @@ int main()
     struct timeval endTime;
     gettimeofday(&endTime, NULL);
 
-    printf("PI = %.16lf with error %.16lf\nTime elapsed : %lf seconds.\n\n", pi, PI - pi, (endTime.tv_sec - startTime.tv_sec) + ((double)(endTime.tv_usec - startTime.tv_usec) / 10E6 ));
-
+    printf("PI = %.16lf with error %.16lf\nTime elapsed : %lf seconds.\n\n", pi, fabs(pi - PI), (endTime.tv_sec - startTime.tv_sec) + ((double)(endTime.tv_usec - startTime.tv_usec) / 10E6 ));
+    assert(fabs(pi - PI) <= 0.001);
     return 0;
 }

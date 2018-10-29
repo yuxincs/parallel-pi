@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <assert.h>
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
@@ -10,7 +11,7 @@ const long STEP_NUM = 10000000;
 
 int main (int argc, char* argv[])
 {
-    long totalCount = 0; 
+    long totalCount = 0;
 
     MPI_Init (&argc, &argv);
 
@@ -25,14 +26,14 @@ int main (int argc, char* argv[])
     MPI_Barrier(MPI_COMM_WORLD);
 
     if(rank == 0)
-        printf("\n%d processes initialized.\nStart calculating...\n", size); 
+        printf("\n%d processes initialized.\nStart calculating...\n", size);
 
     double startTime = MPI_Wtime();
 
     long count = 0;
     srand((int)time(NULL) ^ omp_get_thread_num());
     // each process will calculate a part of the sum
-	#pragma omp parallel for reduction(+:count) num_threads(4)
+    #pragma omp parallel for reduction(+:count) num_threads(4)
     for (int i = 0; i < STEP_NUM / size; i ++)
     {
         double x = (double)rand() / RAND_MAX;
@@ -40,7 +41,7 @@ int main (int argc, char* argv[])
         if ((x * x + y * y) <= 1)
             count += 1;
     }
-    
+
     // sum up all results
     MPI_Reduce(&count, &totalCount, 1, MPI_LONG, MPI_SUM, 0, MPI_COMM_WORLD);
 
@@ -53,6 +54,7 @@ int main (int argc, char* argv[])
     {
         double pi = ((double)totalCount / STEP_NUM) * 4;
         printf("PI = %.16lf with error %.16lf\nTime elapsed : %lf seconds.\n\n", pi, PI - pi, (endTime - startTime));
+        assert(fabs(PI - pi) <= 0.001);
     }
 
     MPI_Finalize();
