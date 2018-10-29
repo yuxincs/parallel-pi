@@ -1,0 +1,12 @@
+language: c
+
+compiler: gcc
+
+script:
+  - make testopenmp
+  - make testpthread
+  - make testmpi
+  - make testmpiomp
+
+notifications:
+  email: false
