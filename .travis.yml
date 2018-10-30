@@ -5,6 +5,7 @@ compiler: gcc
 script:
   - make testopenmp
   - make testpthread
+  - test -n $CC && unset CC
   - make testmpi
   - make testmpiomp
 
