@@ -17,7 +17,7 @@ int main()
   double sum = 0.0;
   double pi, x;
 
-  printf("\nStart calculating...\n");
+  printf("\nStart calculating with $d threads...\n", omp_get_num_threads());
   // computational steps
   #pragma omp parallel for reduction(+:sum) private(x) num_threads(16)
   for(int i = 0;i < STEP_NUM; i++)
