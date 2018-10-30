@@ -1,37 +1,37 @@
 all: openmp pthread mpi cuda
 
 openmp: openmp.c
-	${CC} -std=c99 -fopenmp -o openmp openmp.c
+	${CC} -std=c99 -fopenmp -o pi-openmp openmp.c
 
 pthread: pthread.c
-	${CC} -std=c99 -pthread -o pthread pthread.c
+	${CC} -std=c99 -pthread -o pi-pthread pthread.c
 
 mpi: mpi.c
-	mpicc -std=c99 -o mpi mpi.c
+	mpicc -std=c99 -o pi-mpi mpi.c
 
 cuda: cuda.cu
-	nvcc -o cuda cuda.cu
+	nvcc -o pi-cuda cuda.cu
 
 mpiomp: mpiomp.c
-	mpicc -fopenmp -std=c99 -o mpiomp mpiomp.c
+	mpicc -fopenmp -std=c99 -o pi-mpiomp mpiomp.c
 
 .PHONY: clean test
 clean:
-	rm pthread openmp mpi cuda mpiomp
+	rm pi-*
 
 test: testopenmp testpthread testmpi testcuda
 
 testopenmp: openmp
-	openmp
+	pi-openmp
 
 testcuda: cuda
-	cuda
+	pi-cuda
 
 testmpi: mpi
-	mpiexec -np 16 mpi
+	mpiexec -np 16 pi-mpi
 
 testpthread: pthread
-	pthread
+	pi-pthread
 
 testmpiomp: mpiomp
-	mpiexec -np 4 mpiomp
+	mpiexec -np 4 pi-mpiomp
