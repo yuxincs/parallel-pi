@@ -4,7 +4,7 @@ openmp: openmp.c
 	${CC} -std=c99 -fopenmp -o openmp openmp.c
 
 pthread: pthread.c
-	${CC} -std=c99 -lpthread -o pthread pthread.c
+	${CC} -std=c99 -pthread -o pthread pthread.c
 
 mpi: mpi.c
 	mpicc -std=c99 -o mpi mpi.c
