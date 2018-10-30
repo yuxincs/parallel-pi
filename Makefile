@@ -35,4 +35,5 @@ testpthread: pthread
 	./pi-pthread
 
 testmpiomp: mpiomp
+	export OMP_NUM_THREADS=4
 	mpiexec -np 4 ./pi-mpiomp
