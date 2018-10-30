@@ -23,16 +23,16 @@ test: testopenmp testpthread testmpi testcuda
 
 testopenmp: openmp
 	export OMP_NUM_THREADS=16
-	pi-openmp
+	./pi-openmp
 
 testcuda: cuda
-	pi-cuda
+	./pi-cuda
 
 testmpi: mpi
-	mpiexec -np 16 pi-mpi
+	mpiexec -np 16 ./pi-mpi
 
 testpthread: pthread
-	pi-pthread
+	./pi-pthread
 
 testmpiomp: mpiomp
-	mpiexec -np 4 pi-mpiomp
+	mpiexec -np 4 ./pi-mpiomp
