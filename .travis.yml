@@ -6,7 +6,7 @@ before_install:
   - export CUDA_VERSION=10.0.130-1
   - if [[ true ]]; then
       wget "http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/cuda-repo-ubuntu1404_${CUDA_VERSION}_amd64.deb";
-      sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/7fa2af80.pub
+      sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/7fa2af80.pub;
       sudo dpkg -i cuda-repo-ubuntu1404_${CUDA_VERSION}_amd64.deb;
       sudo apt-get update -qq;
       export CUDA_APT=${CUDA_VERSION%-*};
