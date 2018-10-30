@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <math.h>
 #include <sys/time.h>
 
 typedef struct _thread_param

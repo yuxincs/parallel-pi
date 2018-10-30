@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
 #include <mpi.h>
 
 const double PI = 3.1415926535897932;

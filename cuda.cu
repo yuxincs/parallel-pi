@@ -1,6 +1,7 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include <assert.h>
+#include <math.h>
 #include <stdio.h>
 
 const float PI = 3.1415926535897932;

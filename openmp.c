@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <time.h>
 #include <omp.h>
+#include <math.h>
 #include <sys/time.h>
 
 const double PI = 3.1415926535897932;
