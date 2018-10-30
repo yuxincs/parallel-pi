@@ -6,7 +6,6 @@ install:
   sudo apt-get install -y libcr-dev mpich2 mpich2-doc
 
 script:
-  - export
   - make testopenmp
   - make testpthread
   - test -n $CC && unset CC
