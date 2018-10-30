@@ -1,4 +1,4 @@
-# PI-Calculation
+# PI-Calculation [![Build Status](https://travis-ci.com/RyanWangGit/Parallel-Pi.svg?branch=master)](https://travis-ci.com/RyanWangGit/Parallel-Pi)
 
 Calculating PI Value In Different Parallel Framework.
 
@@ -17,7 +17,7 @@ Use `pthread` as the parallel framework.
 Use `OpenMP` as the parallel framework to calculate, note that in macOS the default `clang` does not support `OpenMP`
 , thus it needs to be built with `gcc` or `clang-omp`.
 
-`gcc-6` could be directly installed by 
+`gcc-6` could be directly installed by
 ```
 brew install gcc --without-multilib
 ```
@@ -31,7 +31,7 @@ brew install clang-omp
 Use `MPI` as the parallel framework.
 
 #### CUDA
-Use `CUDA` to optimize the parallel computing process, which must be run under CUDA environment. i.e., you must have 
+Use `CUDA` to optimize the parallel computing process, which must be run under CUDA environment. i.e., you must have
 at least a nVidia card and `nvcc` installed to compile and run the code.
 
 #### MPIOMP
