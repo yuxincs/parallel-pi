@@ -22,6 +22,7 @@ clean:
 test: testopenmp testpthread testmpi testcuda
 
 testopenmp: openmp
+	export OMP_NUM_THREADS=16
 	pi-openmp
 
 testcuda: cuda
