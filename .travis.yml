@@ -8,7 +8,7 @@ before_install:
   - sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/7fa2af80.pub
   - sudo dpkg -i cuda-repo-ubuntu1404_${CUDA_VERSION}_amd64.deb
   - sudo apt-get update
-  - export CUDA_HOME=/usr/local/cuda-${CUDA_VERSION%%-*}
+  - export CUDA_HOME=/usr/local/cuda
   - export LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
   - export PATH=${CUDA_HOME}/bin:${PATH}
 
