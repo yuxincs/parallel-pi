@@ -1,4 +1,4 @@
-# PI-Calculation [![Build Status](https://travis-ci.com/RyanWangGit/Parallel-Pi.svg?branch=master)](https://travis-ci.com/RyanWangGit/Parallel-Pi)
+# Parallel Pi [![Build Status](https://travis-ci.com/RyanWangGit/parallel-pi.svg?branch=master)](https://travis-ci.com/RyanWangGit/parallel-pi)
 
 Calculating PI Value In Different Parallel Framework.
 
