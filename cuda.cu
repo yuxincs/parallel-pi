@@ -95,6 +95,9 @@ int main()
   cudaMalloc((void **) &deviceBlockSum, sizeof(float) * BLOCK_NUM);
 
   // Start timer
+  cudaEvent_t startTime, stopTime;
+  cudaEventCreate(&startTime);
+  cudaEventCreate(&stopTime);
   cudaEventRecord(startTime, 0);
   printf("Start calculating in optimized kernel function...\n");
   integrate<<<BLOCK_NUM, THREAD_NUM>>>(deviceBlockSum, STEP_NUM, STEP_LENGTH, THREAD_NUM, BLOCK_NUM);
@@ -105,6 +108,7 @@ int main()
 
   cudaEventRecord(stopTime, 0);
   cudaEventSynchronize(stopTime);
+  float optimizedGpuTime = 0;
   cudaEventElapsedTime(&optimizedGpuTime, startTime, stopTime);
 
   printf("PI = %.16lf with error %.16lf\nTime elapsed : %f seconds.\n\n", pi, fabs(pi - PI), optimizedGpuTime / 1000);
