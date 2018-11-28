@@ -9,7 +9,7 @@ Calculating PI Value In Different Parallel Framework.
 
 We use mid-rectangle method to calculate the integration, which includes loops that may be optimized using parallel computing methods.
 
-## Directories
+## Frameworks
 #### PThread
 Use `pthread` as the parallel framework.
 
