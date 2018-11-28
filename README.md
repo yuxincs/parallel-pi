@@ -14,16 +14,17 @@ We use mid-rectangle method to calculate the integration, which includes loops t
 Use `pthread` as the parallel framework.
 
 #### OpenMP
-Use `OpenMP` as the parallel framework to calculate, note that in macOS the default `clang` does not support `OpenMP`
-, thus it needs to be built with `gcc` or `clang-omp`.
+Use `OpenMP` as the parallel framework to calculate Pi.
 
-`gcc-6` could be directly installed by
-```
+Note that in macOS the default `clang` does not support `OpenMP`, thus it needs to be built with `gcc` or `clang-omp`.
+
+`gcc` could be directly installed by
+```sh
 brew install gcc --without-multilib
 ```
 
 and `clang-omp`  could be installed via
-```
+```sh
 brew install clang-omp
 ```
 
