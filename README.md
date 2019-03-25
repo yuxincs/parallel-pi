@@ -15,16 +15,16 @@ Use `pthread` as the parallel framework.
 ### OpenMP
 Use `OpenMP` as the parallel framework to calculate Pi.
 
-Note that in macOS the default `clang` does not support `OpenMP`, thus it needs to be built with `gcc` or `clang-omp`.
+Note that in macOS the default `clang` does not support `OpenMP`, thus it needs to be built with `gcc` or `llvm`.
 
 `gcc` could be directly installed by
 ```sh
-brew install gcc --without-multilib
+brew install gcc
 ```
 
-and `clang-omp`  could be installed via
+and `llvm`  could be installed via
 ```sh
-brew install clang-omp
+brew install llvm
 ```
 
 ### MPI
