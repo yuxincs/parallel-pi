@@ -1,4 +1,4 @@
-# Parallel Pi [![Build Status](https://travis-ci.com/RyanWangGit/parallel-pi.svg?branch=master)](https://travis-ci.com/RyanWangGit/parallel-pi)
+# Parallel Pi [![Build Status](https://travis-ci.com/yxwangcs/parallel-pi.svg?branch=master)](https://travis-ci.com/yxwangcs/parallel-pi)
 
 Calculating PI Value In Different Parallel Framework.
 
@@ -53,4 +53,4 @@ Parallel parameters are listed below:
 | MPIOMP        | 4 Processes / 4 Threads |
 
 ## License
-[MIT](https://github.com/RyanWangGit/PI-Calculation/blob/master/LICENSE.md).
+[MIT](https://github.com/yxwangcs/PI-Calculation/blob/master/LICENSE.md).
