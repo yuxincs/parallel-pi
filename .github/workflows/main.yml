@@ -15,7 +15,7 @@ jobs:
     - name: Install openmp / MPI
       run: |
         sudo apt-get update
-        sudo apt-get install -y libcr-dev mpich2 mpich2-doc
+        sudo apt-get install -y libcr-dev mpich mpich-doc
     - name: Install CUDA
       run: |
         wget "http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_${CUDA_VERSION}_amd64.deb"
