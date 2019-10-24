@@ -1,4 +1,5 @@
-# Parallel Pi [![Build Status](https://travis-ci.com/yxwangcs/parallel-pi.svg?branch=master)](https://travis-ci.com/yxwangcs/parallel-pi)
+# Parallel Pi 
+[![Github Actions](https://github.com/yxwangcs/parallel-pi/workflows/build/badge.svg)](https://github.com/yxwangcs/parallel-pi/actions?workflow=build)
 
 Calculating PI Value In Different Parallel Framework.
 
