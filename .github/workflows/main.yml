@@ -7,7 +7,7 @@ jobs:
 
     runs-on: ubuntu-18.04
     env:
-      CUDA_VERSION: 10.0.243-1
+      CUDA_VERSION: 10.1.243-1
       CUDA_HOME: /usr/local/cuda
     
     steps:
