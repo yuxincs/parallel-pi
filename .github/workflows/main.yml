@@ -1,0 +1,36 @@
+name: build
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+    env:
+      CUDA_VERSION: 10.0.243-1
+      CUDA_HOME: /usr/local/cuda
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install openmp / MPI
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libcr-dev mpich2 mpich2-doc
+    - name: Install CUDA
+      run: |
+        wget "http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-repo-ubuntu1804_${CUDA_VERSION}_amd64.deb"
+        sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
+        sudo dpkg -i cuda-repo-ubuntu1804_${CUDA_VERSION}_amd64.deb
+        sudo apt-get update
+        sudo apt-get install -y cuda
+        
+    - name: Build and Test
+      run: |
+        export LD_LIBRARY_PATH=${CUDA_HOME}/lib64:${LD_LIBRARY_PATH}
+        export PATH=${CUDA_HOME}/bin:${PATH}
+        make testopenmp
+        make testpthread
+        make cuda
+        test -n $CC && unset CC
+        make testmpi
+        make testmpiomp
